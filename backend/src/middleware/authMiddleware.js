@@ -43,3 +43,26 @@ export const adminMiddleware = asyncHandler(async(req, res, next) => {
     //if not admin, send 403 - Forbidden
     res.status(403).json({ message: "only admin can do this" });
 });
+
+
+//creator middleware
+export const creatorMiddleware = asyncHandler(async(req, res, next) => {
+    if ((req.user && req.user.role === "creator") && (req.user && req.user.role === "admin")) {
+        //if user is creator call next middleware
+        next();
+        return;  
+    }
+    //if not creator, send 403 - Forbidden
+    res.status(403).json({ message: "only creator can do this" });
+}); 
+
+// verified middleware
+const verifiedMiddleware = asyncHandler(async(req, res, next) => {
+    if(req.user && req.user.isVerified){
+        //if user is verified call next middleware
+        next();
+        return;
+    }
+    //if not verified, send 403 - Forbidden
+    res.status(403).json({ message: "please verify your email" });
+});
