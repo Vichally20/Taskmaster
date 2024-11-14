@@ -2,6 +2,7 @@ import asyncHandler from 'express-async-handler';
 import User from '../../models/auth/userModel.js';
 import generateToken from '../../helpers/generateToken.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 //User registration
 export const registerUser = asyncHandler(async(req, res) => {
@@ -157,4 +158,22 @@ if(user){
     // 404 - Not found
     res.status(404).json({ message: "User not found" });
 }
+});
+
+//login status
+
+export const userLoginStatus = asyncHandler(async(req, res) => {
+    const token = req.cookies.token;
+
+    if(!token){
+        res.status(401).json({ message: "Not authorized, please login" });
+    }
+    //verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if(decoded){
+        res.status(200).json(true);
+    }else{
+        res.status(401).json(false);
+    }
 });
